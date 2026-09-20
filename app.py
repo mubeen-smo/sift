@@ -36,15 +36,6 @@ from core.parser import parse_file
 from core.sentence_window import SentenceWindowRetriever
 from core.llm import generate_answer
 
-try:
-    from streamlit_extras.stylable_container import stylable_container
-except ImportError:
-    from contextlib import contextmanager
-
-    @contextmanager
-    def stylable_container(key, css_styles):
-        yield
-
 
 def _md_to_html(text: str) -> str:
     try:
@@ -79,7 +70,14 @@ st.markdown("""
   --nav-text:     #b45309;
 }
 
-html, body, [class*="css"], [class*="st-"] {
+/* Safer global styling: avoid broad [class*="css"] / [class*="st-"] selectors */
+html, body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  color: var(--primary);
+}
+.stApp,
+[data-testid="stAppViewContainer"],
+[data-testid="stMain"] {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
   color: var(--primary);
 }
@@ -404,21 +402,31 @@ header[data-testid="stHeader"] { background: transparent !important; }
   letter-spacing: 1px;
 }
 
+.section-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0 0 10px;
+  letter-spacing: -0.1px;
+}
+
 /* ── Primary button ──────────────────────────────────────────────────────── */
 .stButton > button {
-  background: #855300 !important;
+  background: linear-gradient(180deg, #f59e0b 0%, #ea8c00 100%) !important;
   color: #ffffff !important;
-  border: 1px solid #855300 !important;
-  border-radius: 12px !important;
-  font-weight: 600 !important;
+  border: 1px solid #ea8c00 !important;
+  border-radius: 14px !important;
+  font-weight: 800 !important;
   font-size: 14px !important;
   padding: 0.55rem 1.5rem !important;
-  box-shadow: 0 2px 8px rgba(133,83,0,0.2) !important;
+  letter-spacing: 0.8px !important;
+  text-transform: uppercase !important;
+  box-shadow: 0 8px 20px rgba(245,158,11,0.28) !important;
   transition: background 0.15s ease, transform 0.08s ease;
 }
-.stButton > button:hover  { background: #6b4400 !important; border-color: #6b4400 !important; }
+.stButton > button:hover  { background: linear-gradient(180deg, #ffab1f 0%, #f59e0b 100%) !important; border-color: #f59e0b !important; }
 .stButton > button:active { transform: translateY(1px); }
-.stButton > button:focus  { box-shadow: 0 0 0 3px rgba(133,83,0,0.22) !important; }
+.stButton > button:focus  { box-shadow: 0 0 0 3px rgba(245,158,11,0.20), 0 8px 20px rgba(245,158,11,0.28) !important; }
 
 /* Clear button override */
 .clear-btn .stButton > button {
@@ -437,7 +445,13 @@ header[data-testid="stHeader"] { background: transparent !important; }
 }
 
 /* ── File uploader ───────────────────────────────────────────────────────── */
-[data-testid="stFileUploader"] { background: transparent !important; border: none !important; padding: 0 !important; }
+/* Keep uploader styling visual only; do not force internal layout */
+[data-testid="stFileUploader"] {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
 [data-testid="stFileUploader"] section,
 [data-testid="stFileUploaderDropzone"] {
   background: #fff !important;
@@ -445,15 +459,52 @@ header[data-testid="stHeader"] { background: transparent !important; }
   border-radius: 12px !important;
   padding: 18px 16px !important;
   transition: border-color .18s, background .18s;
+  min-height: 118px !important;
 }
+
 [data-testid="stFileUploader"] section:hover,
-[data-testid="stFileUploaderDropzone"]:hover { border-color: var(--amber) !important; background: var(--nav-active) !important; }
-[data-testid="stFileUploader"] label { color: var(--primary) !important; font-weight: 600 !important; font-size: 13.5px !important; }
+[data-testid="stFileUploaderDropzone"]:hover {
+  border-color: var(--amber) !important;
+  background: var(--nav-active) !important;
+}
+
+[data-testid="stFileUploader"] label {
+  color: var(--primary) !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+}
+
 [data-testid="stFileUploader"] small,
-[data-testid="stFileUploader"] [data-testid="stFileUploaderDropzoneInstructions"] span { color: var(--secondary) !important; }
-[data-testid="stFileUploader"] button { background: #fff !important; border: 1px solid var(--border-2) !important; border-radius: 8px !important; color: var(--primary) !important; font-weight: 600 !important; font-size: 12.5px !important; padding: 6px 14px !important; box-shadow: none !important; }
-[data-testid="stFileUploader"] button:hover { border-color: var(--amber) !important; color: var(--amber-dark) !important; }
-[data-testid="stFileUploader"] [data-testid="stFileUploaderFile"] { background: #fff !important; border: 1px solid var(--border-2) !important; border-radius: 10px !important; margin-top: 8px !important; }
+[data-testid="stFileUploader"] [data-testid="stFileUploaderDropzoneInstructions"] span {
+  color: var(--secondary) !important;
+}
+
+/* Style button appearance only; avoid layout/child overrides */
+[data-testid="stFileUploader"] button {
+  background: #fff !important;
+  border: 1px solid rgba(245,158,11,0.32) !important;
+  border-radius: 12px !important;
+  color: var(--amber-dark) !important;
+  font-weight: 800 !important;
+  font-size: 13px !important;
+  letter-spacing: 0.6px !important;
+  text-transform: uppercase !important;
+  padding: 12px 22px !important;
+  box-shadow: 0 4px 12px rgba(245,158,11,0.10) !important;
+}
+
+[data-testid="stFileUploader"] button:hover {
+  border-color: var(--amber) !important;
+  color: var(--amber-dark) !important;
+  background: #fffaf0 !important;
+}
+
+[data-testid="stFileUploader"] [data-testid="stFileUploaderFile"] {
+  background: #fff !important;
+  border: 1px solid var(--border-2) !important;
+  border-radius: 10px !important;
+  margin-top: 8px !important;
+}
 
 /* ── Text area ───────────────────────────────────────────────────────────── */
 [data-testid="stTextArea"] { background: transparent !important; }
@@ -477,7 +528,6 @@ header[data-testid="stHeader"] { background: transparent !important; }
   border-color: var(--amber) !important;
   box-shadow: 0 0 0 3px rgba(245,158,11,0.13), 0 0 12px rgba(245,158,11,0.06) !important;
 }
-/* Kill ALL inner outlines/borders so only the pill itself shows focus */
 [data-testid="stChatInput"] textarea,
 [data-testid="stChatInput"] textarea:focus,
 [data-testid="stChatInput"] [data-baseweb="base-input"],
@@ -494,7 +544,7 @@ header[data-testid="stHeader"] { background: transparent !important; }
   font-family: 'Inter', sans-serif !important;
 }
 [data-testid="stChatInput"] textarea::placeholder { color: var(--muted) !important; font-style: italic; }
-/* Send button — amber pill, always styled */
+
 [data-testid="stChatInputSubmitButton"] {
   display: flex !important;
   align-items: center !important;
@@ -545,13 +595,14 @@ details[data-testid="stExpander"] summary:hover { color: var(--amber-dark) !impo
   text-transform: uppercase;
   color: var(--muted);
 }
+
 </style>
 """, unsafe_allow_html=True)
 
 
 # ── State ─────────────────────────────────────────────────────────────────────
 retriever: SentenceWindowRetriever | None = st.session_state.get("retriever")
-docs         = st.session_state.get("docs", [])
+docs          = st.session_state.get("docs", [])
 combined_text = st.session_state.get("combined_text", "")
 
 
@@ -623,32 +674,30 @@ if not (combined_text and retriever):
         unsafe_allow_html=True,
     )
 
-    _CARD_CSS = (
-        "{ background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; "
-        "padding: 20px 20px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); "
-        "margin-bottom: 16px; }"
-    )
-    with stylable_container(key="upload_card", css_styles=_CARD_CSS):
+    with st.container():
         col1, col_sep, col2 = st.columns([5, 1, 5], gap="small")
         with col1:
+            st.markdown('<div class="section-label">Upload documents</div>', unsafe_allow_html=True)
             uploaded_files = st.file_uploader(
                 "Upload one or more files",
                 type=["pdf", "docx", "txt"],
                 accept_multiple_files=True,
+                label_visibility="collapsed",
             )
         with col_sep:
-            st.markdown('<div class="or-sep"><div class="or-pill">OR</div></div>',
-                        unsafe_allow_html=True)
+            st.markdown('<div class="or-sep"><div class="or-pill">OR</div></div>', unsafe_allow_html=True)
         with col2:
+            st.markdown('<div class="section-label">Paste text</div>', unsafe_allow_html=True)
             pasted_text = st.text_area(
                 "Paste text",
                 height=148,
                 placeholder="Paste any text here — an article, a contract, your notes…",
+                label_visibility="collapsed",
             )
 
     _, btn_col, _ = st.columns([4, 2, 4])
     with btn_col:
-        load_clicked = st.button("Load and index", use_container_width=True)
+      load_clicked = st.button("LOAD", use_container_width=True)
 
 else:
     load_clicked   = False
@@ -676,6 +725,20 @@ if load_clicked:
         cache_key = SentenceWindowRetriever.content_hash(
             [f"{name}\n{text}" for name, text in raw_docs] + ["sw-v1"]
         )
+
+        st.markdown('<div id="loading-anchor"></div>', unsafe_allow_html=True)
+        components.html("""<script>
+        setTimeout(function(){
+          var anchor = window.parent.document.getElementById('loading-anchor');
+          if (anchor) {
+            anchor.scrollIntoView({behavior: 'smooth', block: 'center'});
+          } else {
+            var el = window.parent.document.querySelector('section.main')
+                  || window.parent.document.querySelector('.main');
+            if (el) el.scrollTo({top: 99999, behavior: 'smooth'});
+          }
+        }, 80);
+        </script>""", height=0)
 
         _build_ph = st.empty()
         _build_ph.markdown(
@@ -781,15 +844,14 @@ if combined_text and retriever:
         else:
             _ai_bubble(msg["content"], sources=msg.get("sources"))
 
-    # meta strip sits just above the chat input
     st.markdown(
         '<div class="input-meta">'
         '<span class="input-meta-item">'
         '<svg width="9" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'
-        'Encrypted Analysis</span>'
+        'FAISS indexing</span>'
         '<span class="input-meta-item">'
         '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'
-        '24 Hour Retention</span>'
+        'Document Caching</span>'
         '<span class="input-meta-item">'
         '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'
         'Llama-3 Enhanced</span>'

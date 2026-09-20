@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/sift_demo.gif" style="width: 100%; max-width: 1100px; height: auto;" alt="Sift — particles sifting through a retrieval filter" />
+  <img src="assets/sift_banner.gif" style="width: 100%; max-width: 1100px; height: auto;" alt="Sift — particles sifting through a retrieval filter" />
 </div>
 
 <br />
@@ -7,6 +7,12 @@
 <div align="center">
   <!--<img src="assets/sift_logo.png" width="240" alt="Sift" />-->
   <p><strong>Ask questions of your documents. Get answers grounded in the source.</strong></p>
+  <p>
+    <a href="https://sift-4-qs.streamlit.app/">
+      <img src="https://img.shields.io/badge/TRY%20IT%20LIVE-OPEN%20APP-855300?style=for-the-badge&logo=streamlit&logoColor=white&labelColor=f59e0b" alt="Try it live" />
+    </a>
+  </p>
+  <p>
   <p>
     <img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square&logo=python&logoColor=white" alt="Python" />
     <img src="https://img.shields.io/badge/Streamlit-1.x-FF4B4B?style=flat-square&logo=streamlit&logoColor=white" alt="Streamlit" />
